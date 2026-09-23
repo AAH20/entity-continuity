@@ -1,0 +1,25 @@
+{
+  "entity": {
+    "id": "demo-company",
+    "jurisdiction": "US-DE-SYNTHETIC",
+    "founder_location": "Egypt",
+    "name": "Synthetic Company Inc."
+  },
+  "events": [
+    {"id": "formation", "entity_id": "demo-company", "type": "formed", "occurred_at": "2026-09-01"},
+    {"id": "ownership-1", "entity_id": "demo-company", "type": "ownership_changed", "occurred_at": "2026-09-15"}
+  ],
+  "evidence": [
+    {"id": "upload-1", "event_id": "formation", "obligation_id": "review-post-formation", "status": "self_declared", "source_kind": "customer_upload"}
+  ],
+  "grants": [
+    {"id": "grant-1", "principal_id": "founder", "entity_id": "demo-company", "actions": ["request_provider_review"], "expires_at": "2026-12-31"}
+  ],
+  "approvals": [
+    {"id": "approval-1", "intent_id": "intent-reviewed", "actor_id": "board-reviewer", "entity_id": "demo-company", "decision": "approve"}
+  ],
+  "intents": [
+    {"id": "intent-reviewed", "actor_id": "founder", "action": "request_provider_review"},
+    {"id": "intent-denied", "actor_id": "research-agent", "action": "submit_filing"}
+  ]
+}

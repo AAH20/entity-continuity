@@ -1,0 +1,21 @@
+{
+  "jurisdiction": "US-DE-SYNTHETIC",
+  "version": "0.1.0",
+  "status": "SYNTHETIC_REFERENCE",
+  "effective_from": "2026-01-01",
+  "notes": "Illustrative deadlines only. These rules do not describe Delaware law. Source URLs identify a regulator to consult, not support for the invented due_days values.",
+  "obligations": [
+    {
+      "id": "review-post-formation",
+      "trigger": "formed",
+      "due_days": 30,
+      "source_url": "https://corp.delaware.gov/howtoform/"
+    },
+    {
+      "id": "review-ownership-change",
+      "trigger": "ownership_changed",
+      "due_days": 7,
+      "source_url": "https://corp.delaware.gov/faqs/"
+    }
+  ]
+}
