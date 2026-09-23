@@ -20,11 +20,11 @@ sequenceDiagram
   Provider-->>Engine: Authenticated outcome in a future integration
 ```
 
-Only the first engine evaluation exists today. Every other interaction in the sequence is a design boundary, not implemented connectivity.
+Only the first engine evaluation and exact-input offline receipt recomputation exist today. Every external interaction in the sequence is a design boundary, not implemented connectivity. See the [expanded network architecture](NETWORK_ARCHITECTURE.md), including the high-contrast evidence and authority model.
 
 ## Authority invariant
 
-An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.1 evaluator checks only the local grant and independent-approval fields. It cannot authenticate people or establish legal authority.
+An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.2 evaluator checks only the local grant and independent-approval fields. It cannot authenticate people or establish legal authority.
 
 ## Evidence invariant
 

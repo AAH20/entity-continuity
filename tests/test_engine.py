@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from entity_continuity.engine import InvalidCase, evaluate
+from entity_continuity.verify import verify
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,18 @@ class EntityContinuityTests(unittest.TestCase):
         self.assertEqual(one["obligations"][0]["evidence_status"], "reported")
         self.assertEqual([x["decision"] for x in one["decisions"]], ["reviewable", "deny"])
         self.assertEqual(one["decisions"][0]["authority"], "REFERENCE_ONLY_NOT_AUTHENTICATED")
+        self.assertTrue(verify(self.case, self.pack, "2026-09-23", one)["valid"])
+
+    def test_receipt_verifier_rejects_changed_decision_and_source(self):
+        receipt = evaluate(self.case, self.pack, "2026-09-23")
+        altered = copy.deepcopy(receipt)
+        altered["decisions"][0]["decision"] = "authorized"
+        with self.assertRaisesRegex(InvalidCase, "differs"):
+            verify(self.case, self.pack, "2026-09-23", altered)
+        changed_case = copy.deepcopy(self.case)
+        changed_case["events"][0]["occurred_at"] = "2026-09-02"
+        with self.assertRaisesRegex(InvalidCase, "differs"):
+            verify(changed_case, self.pack, "2026-09-23", receipt)
 
     def test_wrong_jurisdiction_fails_closed(self):
         changed = copy.deepcopy(self.case)

@@ -4,7 +4,7 @@
 
 Entity Continuity is the proposed open-source foundation for a cross-border entity operating network. It models a company's lifecycle as events, evaluates jurisdiction-specific obligation rules, checks proposed actions against scoped grants and independent approvals, and emits a deterministic receipt. The commercial vision is a managed network of qualified formation, legal, accounting, filing, and infrastructure providers. The reference engine does not replace those providers.
 
-> **Current evidence boundary:** v0.1 runs only local, synthetic cases. Its `US-DE-SYNTHETIC` pack contains invented deadlines and is **not a Delaware filing calendar**. It does not connect to a registry, authenticate a person, verify a provider, execute a filing, or provide legal or tax advice. The `reviewable` result means a local rule passed, not that an action is authorized in the real world.
+> **Current evidence boundary:** v0.2 runs only local, synthetic cases and can recompute a receipt from the exact local inputs. Its `US-DE-SYNTHETIC` pack contains invented deadlines and is **not a Delaware filing calendar**. It does not connect to a registry, authenticate a person, verify a provider, execute a filing, or provide legal or tax advice. The `reviewable` result means a local rule passed, not that an action is authorized in the real world.
 
 ## Run the case study
 
@@ -14,7 +14,12 @@ Python 3.11+ is sufficient; the runtime has no third-party dependencies.
 PYTHONPATH=src python3 -m entity_continuity.cli \
   examples/egypt-to-us-synthetic-case.json \
   examples/us-de-synthetic-pack.json \
-  --as-of 2026-09-23 --output generated/passport.json
+  --as-of 2026-09-23 --output /tmp/entity-continuity-passport.json
+
+PYTHONPATH=src python3 -m entity_continuity.verify_cli \
+  examples/egypt-to-us-synthetic-case.json \
+  examples/us-de-synthetic-pack.json \
+  /tmp/entity-continuity-passport.json --as-of 2026-09-23
 
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
@@ -39,11 +44,13 @@ flowchart TB
   S[Accounting, ERP and infrastructure systems] -. future read-only adapters .-> E
 ```
 
-Solid lines describe the local reference design. Dotted lines are proposed integrations; no provider or production system is connected in v0.1. A production handoff would require identity verification, authenticated approvals, provider agreements, jurisdiction-specific review, durable storage, and operational controls.
+Solid lines describe the local reference design. Dotted lines are proposed integrations; no provider or production system is connected in v0.2. A production handoff would require identity verification, authenticated approvals, provider agreements, jurisdiction-specific review, durable storage, and operational controls.
+
+The [expanded Entity Continuity Network architecture](docs/NETWORK_ARCHITECTURE.md) maps the OSS kernel, commercial compartments, authority lifecycle, jurisdiction-pack release process, and economic feedback loop. Its **evidence and authority data model uses explicitly dark, high-contrast record boxes** for readable field labels on GitHub.
 
 ## Core contracts
 
-| Contract | Required meaning | v0.1 treatment |
+| Contract | Required meaning | v0.2 treatment |
 | --- | --- | --- |
 | Entity | Stable ID and jurisdiction | Exactly one entity per case |
 | Event | Entity-bound occurrence and date | Drives rule evaluation |
@@ -53,6 +60,7 @@ Solid lines describe the local reference design. Dotted lines are proposed integ
 | Approval | Independent actor, entity, intent and decision | Self-approval denied; identity not authenticated |
 | Intent | Proposed actor and action | `deny` or `reviewable`, never production authorization |
 | Receipt | Canonical input and output SHA-256 digests | Detects changed bytes during local replay; not a signature |
+| Verifier | Full recomputation from exact case, pack and date | Local synthetic consistency only; no source or identity authentication |
 
 Evidence statuses are deliberately conservative. A customer upload does not complete an obligation or suppress an overdue flag. Even an input claiming a registry record yields `verification_claimed` because this release cannot authenticate its origin. See [data and trust boundaries](docs/ARCHITECTURE.md).
 
@@ -71,11 +79,11 @@ The first corridor is **Egypt-based founders operating a US entity**. Next corri
 | [AI Governance Evidence Graph](https://github.com/AAH20/ai-governance-evidence-graph) | Claim-to-evidence assurance cases | No live adapter |
 | [RunProof](https://github.com/AAH20/runproof) | AI-deployment passport attachment | Current public case is synthetic |
 | [WorldOps](https://github.com/AAH20/worldops) | Infrastructure decision receipt attachment | Current facility world is synthetic |
-| Accounting and ERP providers | Read-only ledger and entity metadata imports | No connector in v0.1 |
+| Accounting and ERP providers | Read-only ledger and entity metadata imports | No connector in v0.2 |
 
 ## Evaluation and expansion gates
 
-1. **Reference release:** synthetic replay, fail-closed input validation, deny self-approval and expired grants, and clear evidence labels. Implemented in v0.1.
+1. **Reference release:** synthetic replay, fail-closed input validation, deny self-approval and expired grants, clear evidence labels, and offline receipt recomputation. Implemented locally in v0.2.
 2. **Expert-checked packs:** locally qualified reviewers approve source-linked rules; regression tests cover effective dates, entity types, exceptions and superseded rules. Not implemented.
 3. **Read-only pilot:** import real customer-authorized records; measure missing evidence, false reminders, deadline accuracy and time to a diligence packet. Not implemented.
 4. **Provider handoff:** authenticate customer and provider, sign approvals, apply separation of duties, record filing references and escalation SLAs. Not implemented.
