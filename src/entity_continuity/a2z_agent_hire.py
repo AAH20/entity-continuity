@@ -10,6 +10,11 @@ from .engine import InvalidCase, evaluate
 from .verify import verify
 
 
+ZERO_COSTS = {key: 0 for key in (
+    "worker_payout_usd", "model_cost_usd", "compute_cost_usd", "human_review_cost_usd",
+    "payment_fee_usd", "support_reserve_usd", "rework_reserve_usd")}
+
+
 def _digest(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
                                      ensure_ascii=False, allow_nan=False).encode()).hexdigest()
@@ -36,6 +41,7 @@ def build_handoff(case: dict[str, Any], pack: dict[str, Any], as_of: str,
             "objective": objective,
             "budget_usd": 0,
             "customer_price_usd": 0,
+            "economics": ZERO_COSTS.copy(),
             "acceptance_criteria": [
                 {"id": "SOURCE_RECONCILED", "description": "Reviewer checked the exact source receipt and obligation ID", "required": True},
                 {"id": "EVIDENCE_GAPS", "description": "Missing or unverified evidence is explicitly identified", "required": True},
@@ -49,7 +55,7 @@ def build_handoff(case: dict[str, Any], pack: dict[str, Any], as_of: str,
                                 "due_at": obligation["due_at"], "status": obligation["status"],
                                 "evidence_status": obligation["evidence_status"]},
                      "a2z_job": job})
-    bundle = {"schema_version": "entity-continuity.a2z-agent-hire.v1",
+    bundle = {"schema_version": "entity-continuity.a2z-agent-hire.v2",
               "scope": "SYNTHETIC_REVIEW_DRAFTS_ONLY_NO_EXTERNAL_ACTION",
               "as_of": as_of, "source_receipt_digest": expected["receipt_digest"],
               "jobs": jobs}

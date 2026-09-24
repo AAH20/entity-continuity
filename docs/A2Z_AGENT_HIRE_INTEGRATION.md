@@ -24,7 +24,7 @@ flowchart LR
   class Case,Pack,Receipt,Bundle,Jobs data;
 ```
 
-The exporter verifies the receipt and recomputes the bundle. The A2Z import command requires all source artifacts and rechecks them before writing to local SQLite. Reimporting an identical bundle is idempotent; a conflicting job ID is rejected. No network request or external action occurs.
+The exporter verifies the receipt and recomputes the **v2 bundle**. The A2Z import command requires all source artifacts and rechecks them before writing to local SQLite. The handoff manifest, source mappings and jobs are written in one transaction. Reimporting an identical bundle is idempotent; a conflicting job ID or changed stored contract is rejected. No network request or external action occurs.
 
 ## Data and authority
 
@@ -43,7 +43,7 @@ flowchart TB
   class E,V,R,O,X,S,J,C,H record;
 ```
 
-Generated jobs permit only `human` workers. Zero price and budget make no economic claim. An accepted A2Z review does not change the Entity Continuity obligation state.
+Generated jobs permit only `human` workers. Price, budget and all seven estimated cost fields are explicitly zero; these are drafts, not measured economic outcomes. An accepted A2Z review does not change the Entity Continuity obligation state.
 
 ## Reproduce end to end
 
@@ -65,11 +65,17 @@ PYTHONPATH=.:../entity-continuity/src python3 -m apps.api.import_entity_continui
   /tmp/entity-a2z-bundle.json \
   --case ../entity-continuity/examples/egypt-to-us-synthetic-case.json \
   --pack ../entity-continuity/examples/us-de-synthetic-pack.json \
+  --receipt /tmp/entity-receipt.json --as-of 2026-09-23 --dry-run
+
+PYTHONPATH=.:../entity-continuity/src python3 -m apps.api.import_entity_continuity \
+  /tmp/entity-a2z-bundle.json \
+  --case ../entity-continuity/examples/egypt-to-us-synthetic-case.json \
+  --pack ../entity-continuity/examples/us-de-synthetic-pack.json \
   --receipt /tmp/entity-receipt.json --as-of 2026-09-23 \
   --db /tmp/a2z-agent-hire-entity-demo.db
 ```
 
-The resulting jobs appear in A2Z's local job list. Import does not launch a run or select a worker. Real customer records should never go into these public fixtures.
+The resulting jobs appear in A2Z's local job list. Run its server with `--no-demo-seed` to keep fictional jobs and workers out of this database. Import does not launch a run or select a worker. Older v1 bundles must be regenerated with v0.4; a database containing v1 jobs requires a reviewed migration or a separate clean demo database. Real customer records should never go into these public fixtures.
 
 ## Future production architecture
 

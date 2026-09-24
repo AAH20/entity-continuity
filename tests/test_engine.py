@@ -92,6 +92,31 @@ class EntityContinuityTests(unittest.TestCase):
         with self.assertRaisesRegex(InvalidCase, "due_days"):
             evaluate(changed, self.pack, "2026-09-23")
 
+    def test_unmatched_event_and_unsupported_evidence_fail_closed(self):
+        changed = copy.deepcopy(self.case)
+        changed["events"].append({"id": "unmatched", "entity_id": "demo-company",
+                                  "type": "unmatched", "occurred_at": "not-a-date"})
+        with self.assertRaisesRegex(InvalidCase, "occurred_at"):
+            evaluate(changed, self.pack, "2026-09-23")
+        changed = copy.deepcopy(self.case)
+        changed["evidence"][0]["status"] = "approved"
+        with self.assertRaisesRegex(InvalidCase, "unsupported"):
+            evaluate(changed, self.pack, "2026-09-23")
+        changed = copy.deepcopy(self.case)
+        changed["evidence"][0]["status"] = "externally_verified"
+        with self.assertRaisesRegex(InvalidCase, "customer upload"):
+            evaluate(changed, self.pack, "2026-09-23")
+
+    def test_rule_due_date_overflow_and_missing_pack_date_fail_closed(self):
+        changed = copy.deepcopy(self.pack)
+        changed["obligations"][0]["due_days"] = 999999999
+        with self.assertRaisesRegex(InvalidCase, "out-of-range"):
+            evaluate(self.case, changed, "2026-09-23")
+        changed = copy.deepcopy(self.pack)
+        del changed["effective_from"]
+        with self.assertRaisesRegex(InvalidCase, "pack.effective_from"):
+            evaluate(self.case, changed, "2026-09-23")
+
     def test_a2z_handoff_is_deterministic_review_only_and_source_bound(self):
         receipt = evaluate(self.case, self.pack, "2026-09-23")
         bundle = build_handoff(self.case, self.pack, "2026-09-23", receipt)

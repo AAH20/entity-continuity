@@ -14,6 +14,8 @@ class InvalidCase(ValueError):
 
 
 def _day(value: str, field: str) -> date:
+    if not isinstance(value, str) or len(value) != 10 or value[4] != "-" or value[7] != "-":
+        raise InvalidCase(f"{field} must be an ISO date")
     try:
         return date.fromisoformat(value)
     except (TypeError, ValueError) as exc:
@@ -55,7 +57,7 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
         raise InvalidCase("only SYNTHETIC_REFERENCE packs are accepted by this release")
     if not isinstance(pack.get("version"), str) or not pack["version"].strip():
         raise InvalidCase("pack.version is required")
-    if today < _day(pack["effective_from"], "pack.effective_from"):
+    if today < _day(pack.get("effective_from"), "pack.effective_from"):
         raise InvalidCase("pack is not yet effective")
     events = _objects(case.get("events", []), "events")
     evidence = _objects(case.get("evidence", []), "evidence")
@@ -67,8 +69,13 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
                         ("approvals", approvals), ("intents", intents), ("pack.obligations", rules)):
         _unique(items, name)
     event_by_id = {item["id"]: item for item in events}
-    if any(event.get("entity_id") != entity["id"] for event in events):
-        raise InvalidCase("all events must belong to entity.id")
+    for event in events:
+        if event.get("entity_id") != entity["id"]:
+            raise InvalidCase("all events must belong to entity.id")
+        if not isinstance(event.get("type"), str) or not event["type"].strip():
+            raise InvalidCase(f"events.{event['id']}.type is required")
+        if _day(event.get("occurred_at"), f"events.{event['id']}.occurred_at") > today:
+            raise InvalidCase("future events cannot create current obligations")
     if any(item.get("event_id") not in event_by_id for item in evidence):
         raise InvalidCase("evidence must reference an existing event")
     rule_by_id = {item["id"]: item for item in rules}
@@ -77,6 +84,13 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
     if any(event_by_id[item["event_id"]].get("type") != rule_by_id[item["obligation_id"]].get("trigger")
            for item in evidence):
         raise InvalidCase("evidence event must match its obligation trigger")
+    for item in evidence:
+        if item.get("status") not in {"self_declared", "externally_verified"}:
+            raise InvalidCase(f"evidence.{item['id']}.status is unsupported")
+        if item.get("source_kind") not in {"customer_upload", "provider_attestation", "registry_record"}:
+            raise InvalidCase(f"evidence.{item['id']}.source_kind is unsupported")
+        if item["status"] == "externally_verified" and item["source_kind"] == "customer_upload":
+            raise InvalidCase("customer upload cannot claim external verification")
     intent_by_id = {item["id"]: item for item in intents}
     if any(item.get("intent_id") not in intent_by_id for item in approvals):
         raise InvalidCase("approval must reference an existing intent")
@@ -84,8 +98,9 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
         if grant.get("entity_id") != entity["id"] or not isinstance(grant.get("principal_id"), str) or not grant["principal_id"].strip():
             raise InvalidCase("grant requires an entity-bound principal")
         _day(grant.get("expires_at"), f"grants.{grant['id']}.expires_at")
-        if not isinstance(grant.get("actions"), list) or any(not isinstance(x, str) for x in grant["actions"]):
-            raise InvalidCase("grant actions must be a list of strings")
+        if (not isinstance(grant.get("actions"), list) or
+                any(not isinstance(x, str) or not x.strip() for x in grant["actions"])):
+            raise InvalidCase("grant actions must be a list of nonempty strings")
     for approval in approvals:
         if approval.get("entity_id") != entity["id"] or not isinstance(approval.get("actor_id"), str) or not approval["actor_id"].strip():
             raise InvalidCase("approval requires an entity-bound actor")
@@ -101,10 +116,11 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
         for event in events:
             if event.get("type") != rule["trigger"]:
                 continue
-            occurred = _day(event.get("occurred_at"), f"events.{event['id']}.occurred_at")
-            if occurred > today:
-                raise InvalidCase("future events cannot create current obligations")
-            due = occurred + timedelta(days=rule["due_days"])
+            occurred = _day(event["occurred_at"], f"events.{event['id']}.occurred_at")
+            try:
+                due = occurred + timedelta(days=rule["due_days"])
+            except (OverflowError, ValueError) as exc:
+                raise InvalidCase(f"obligation rule {rule['id']} has an out-of-range due_days") from exc
             matches = [item for item in evidence if item.get("obligation_id") == rule["id"]
                        and item.get("event_id") == event["id"]]
             verified = [item for item in matches if item.get("status") == "externally_verified"
@@ -121,7 +137,7 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
     decisions = []
     for intent in intents:
         actor, action = intent.get("actor_id"), intent.get("action")
-        if not isinstance(actor, str) or not isinstance(action, str):
+        if not isinstance(actor, str) or not actor.strip() or not isinstance(action, str) or not action.strip():
             raise InvalidCase("intents require actor_id and action")
         valid_grants = [g for g in grants if g.get("principal_id") == actor
                         and g.get("entity_id") == entity["id"] and action in g.get("actions", [])

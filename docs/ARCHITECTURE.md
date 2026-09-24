@@ -24,7 +24,7 @@ The local engine evaluation, exact-input offline receipt recomputation, and A2Z 
 
 ## Authority invariant
 
-An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.3 evaluator checks only local grant and approval fields, with explicit rejection taking precedence. It cannot authenticate people or establish legal authority.
+An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.4 evaluator checks only local grant and approval fields, with explicit rejection taking precedence. It cannot authenticate people or establish legal authority.
 
 ## Evidence invariant
 

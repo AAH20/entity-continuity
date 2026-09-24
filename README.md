@@ -4,7 +4,7 @@
 
 Entity Continuity is the proposed open-source foundation for a cross-border entity operating network. It models a company's lifecycle as events, evaluates jurisdiction-specific obligation rules, checks proposed actions against scoped grants and independent approvals, and emits a deterministic receipt. The commercial vision is a managed network of qualified formation, legal, accounting, filing, and infrastructure providers. The reference engine does not replace those providers.
 
-> **Current evidence boundary:** v0.3 runs only local, synthetic cases, can recompute a receipt from the exact local inputs, and exports A2Z Agent Hire human-review job drafts. Its `US-DE-SYNTHETIC` pack contains invented deadlines and is **not a Delaware filing calendar**. It does not connect to a registry, authenticate a person, verify a provider, execute a filing, or provide legal or tax advice. The `reviewable` result means a local rule passed, not that an action is authorized in the real world.
+> **Current evidence boundary:** v0.4 runs only local, synthetic cases, can recompute a receipt from the exact local inputs, and exports A2Z Agent Hire human-review job drafts. Its `US-DE-SYNTHETIC` pack contains invented deadlines and is **not a Delaware filing calendar**. It does not connect to a registry, authenticate a person, verify a provider, execute a filing, or provide legal or tax advice. The `reviewable` result means a local rule passed, not that an action is authorized in the real world.
 
 ## Run the case study
 
@@ -44,15 +44,15 @@ flowchart TB
   S[Accounting, ERP and infrastructure systems] -. future read-only adapters .-> E
 ```
 
-Solid lines describe the local reference design. Dotted lines are proposed integrations; no provider or production system is connected in v0.3. A production handoff would require identity verification, authenticated approvals, provider agreements, jurisdiction-specific review, durable storage, and operational controls.
+Solid lines describe the local reference design. Dotted lines are proposed integrations; no provider or production system is connected in v0.4. A production handoff would require identity verification, authenticated approvals, provider agreements, jurisdiction-specific review, durable storage, and operational controls.
 
 The [expanded Entity Continuity Network architecture](docs/NETWORK_ARCHITECTURE.md) maps the OSS kernel, commercial compartments, authority lifecycle, jurisdiction-pack release process, and economic feedback loop. Its **evidence and authority data model uses explicitly dark, high-contrast record boxes** for readable field labels on GitHub.
 
-The [A2Z Agent Hire integration](docs/A2Z_AGENT_HIRE_INTEGRATION.md) contains the source-bound offline exporter, idempotent local importer, reproduction commands, and production boundaries. The [production deepening plan](docs/PRODUCTION_DEEPENING.md) maps modules, multi-entity continuity, delivery stages, reliability, and unit economics.
+The [A2Z Agent Hire integration](docs/A2Z_AGENT_HIRE_INTEGRATION.md) contains the source-bound offline exporter, atomic local importer, reproduction commands, and production boundaries. The [production deepening plan](docs/PRODUCTION_DEEPENING.md) maps modules, multi-entity continuity, delivery stages, reliability, and unit economics. The [pilot runbook](docs/PILOT_READINESS.md) defines the next controlled, read-only milestone.
 
 ## Core contracts
 
-| Contract | Required meaning | v0.3 treatment |
+| Contract | Required meaning | v0.4 treatment |
 | --- | --- | --- |
 | Entity | Stable ID and jurisdiction | Exactly one entity per case |
 | Event | Entity-bound occurrence and date | Drives rule evaluation |
@@ -82,12 +82,12 @@ The first corridor is **Egypt-based founders operating a US entity**. Next corri
 | [AI Governance Evidence Graph](https://github.com/AAH20/ai-governance-evidence-graph) | Claim-to-evidence assurance cases | No live adapter |
 | [RunProof](https://github.com/AAH20/runproof) | AI-deployment passport attachment | Current public case is synthetic |
 | [WorldOps](https://github.com/AAH20/worldops) | Infrastructure decision receipt attachment | Current facility world is synthetic |
-| Accounting and ERP providers | Read-only ledger and entity metadata imports | No connector in v0.3 |
-| [A2Z Agent Hire](https://github.com/AAH20/a2z-agent-hire) | Evidence-gap review job drafts with exact-source replay | Local synthetic exporter and importer in v0.3; no live hiring or provider dispatch |
+| Accounting and ERP providers | Read-only ledger and entity metadata imports | No connector in v0.4 |
+| [A2Z Agent Hire](https://github.com/AAH20/a2z-agent-hire) | Evidence-gap review job drafts with exact-source replay | Local synthetic v2 exporter and atomic importer in v0.4; no live hiring or provider dispatch |
 
 ## Evaluation and expansion gates
 
-1. **Reference release:** synthetic replay, fail-closed input validation, denial of self-approval, explicit rejection and expired grants, clear evidence labels, offline receipt recomputation, and review-job export. Implemented locally in v0.3.
+1. **Reference release:** synthetic replay, fail-closed input validation, denial of self-approval, explicit rejection and expired grants, clear evidence labels, offline receipt recomputation, and review-job export. Implemented locally in v0.4.
 2. **Expert-checked packs:** locally qualified reviewers approve source-linked rules; regression tests cover effective dates, entity types, exceptions and superseded rules. Not implemented.
 3. **Read-only pilot:** import real customer-authorized records; measure missing evidence, false reminders, deadline accuracy and time to a diligence packet. Not implemented.
 4. **Provider handoff:** authenticate customer and provider, sign approvals, apply separation of duties, record filing references and escalation SLAs. Not implemented.
