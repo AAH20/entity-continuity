@@ -1,6 +1,6 @@
 # Entity Continuity Network: system architecture
 
-This is the proposed architecture for a cross-border entity operating network. The repository currently implements only the **local synthetic reference engine and offline verifier**. The engine evaluates one entity and a `SYNTHETIC_REFERENCE` jurisdiction pack, returns `open` or `overdue` obligations and `deny` or `reviewable` intent decisions, and emits a deterministic digest. The verifier recomputes that exact local result. Neither authenticates identities, verifies evidence origin, connects to registries or providers, completes filings, or provides legal or tax advice.
+This is the proposed architecture for a cross-border entity operating network. The repository currently implements a **local synthetic reference engine, offline verifier and A2Z human-review job exporter**. The engine evaluates one entity and a `SYNTHETIC_REFERENCE` jurisdiction pack, returns `open` or `overdue` obligations and `deny` or `reviewable` intent decisions, and emits a deterministic digest. The verifier recomputes that exact local result. The exporter generates source-bound, zero-dollar review drafts, and the sibling A2Z repository can import them into local SQLite after exact-source verification. Neither project authenticates identities, verifies evidence origin, connects to registries or providers, completes filings, or provides legal or tax advice.
 
 The first proposed production corridor is an Egypt-based founder operating a defined US entity type. Other countries require their own reviewed rules, provider authority, data-handling design, and operating tests. No global coverage is claimed by this document.
 
@@ -194,7 +194,7 @@ This is a hypothesis to test, not guaranteed exponential growth. Use contributio
 
 | Gate | Required evidence | Current status |
 | --- | --- | --- |
-| Reference engine | Synthetic replay, conservative evidence labels, denial of self-approval and expired grants, offline receipt recomputation | Implemented locally |
+| Reference engine | Synthetic replay, conservative evidence labels, denial of self-approval, explicit rejection and expired grants, offline receipt recomputation, local A2Z review-job handoff | Implemented locally |
 | Reviewed rule pack | Official-source mapping, local professional review, effective-date and exception tests | Not implemented |
 | Read-only customer pilot | Permissioned source import, reconciliation against source counts, private diligence view | Not implemented |
 | Authenticated handoff | Customer/provider identity, scoped signed approval, separation of duties, official confirmation | Not implemented |
