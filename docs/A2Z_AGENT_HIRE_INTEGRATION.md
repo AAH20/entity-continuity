@@ -75,7 +75,9 @@ PYTHONPATH=.:../entity-continuity/src python3 -m apps.api.import_entity_continui
   --db /tmp/a2z-agent-hire-entity-demo.db
 ```
 
-The resulting jobs appear in A2Z's local job list. Run its server with `--no-demo-seed` to keep fictional jobs and workers out of this database. Import does not launch a run or select a worker. Older v1 bundles must be regenerated with v0.4; a database containing v1 jobs requires a reviewed migration or a separate clean demo database. Real customer records should never go into these public fixtures.
+The resulting jobs appear in A2Z's local job list. Run its server with `--no-demo-seed` to keep fictional jobs and workers out of this database. Import does not launch a run or select a worker. Older v1 bundles must be regenerated with v0.5; a database containing v1 jobs requires a reviewed migration or a separate clean demo database. Real customer records should never go into these public fixtures.
+
+For an exact source-manifest trail, first produce a synthetic [read-only intake record](READ_ONLY_INTAKE.md), then pass `--intake-manifest` and `--intake-record` to the A2Z import command. A2Z replays that intake and stores its digest and workspace reference with the bundle. This links review work to the declared source inventory; it does not authenticate consent or isolate tenants.
 
 ## Future production architecture
 

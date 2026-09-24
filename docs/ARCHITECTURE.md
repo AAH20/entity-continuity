@@ -20,11 +20,11 @@ sequenceDiagram
   Provider-->>Engine: Authenticated outcome in a future integration
 ```
 
-The local engine evaluation, exact-input offline receipt recomputation, and A2Z human-review job export/import exist today. Every external interaction in the sequence is a design boundary, not implemented connectivity. See the [expanded network architecture](NETWORK_ARCHITECTURE.md) and [A2Z integration](A2Z_AGENT_HIRE_INTEGRATION.md).
+The local engine evaluation, synthetic source-manifest intake, exact-input offline receipt recomputation, and A2Z human-review job export/import exist today. Every external interaction in the sequence is a design boundary, not implemented connectivity. See the [read-only intake protocol](READ_ONLY_INTAKE.md), [expanded network architecture](NETWORK_ARCHITECTURE.md) and [A2Z integration](A2Z_AGENT_HIRE_INTEGRATION.md).
 
 ## Authority invariant
 
-An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.4 evaluator checks only local grant and approval fields, with explicit rejection taking precedence. It cannot authenticate people or establish legal authority.
+An action can move toward provider handoff only when all of these are true: the action is supported for the entity and jurisdiction; a current, scoped grant belongs to an authenticated principal; an independent authorized reviewer approves; the chosen provider accepts the scope; and the user sees the final terms. The v0.5 evaluator checks only local grant and approval fields, with explicit rejection taking precedence. It cannot authenticate people or establish legal authority.
 
 ## Evidence invariant
 

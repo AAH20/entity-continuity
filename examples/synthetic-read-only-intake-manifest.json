@@ -1,0 +1,22 @@
+{
+  "schema_version": "entity-continuity.read-only-intake.v1",
+  "scope": "SYNTHETIC_READ_ONLY_EVALUATION_NOT_AUTHENTICATED_CONSENT",
+  "workspace_id": "demo-workspace",
+  "entity_id": "demo-company",
+  "jurisdiction": "US-DE-SYNTHETIC",
+  "declared_scope": {
+    "reference": "SYNTHETIC-SCOPE-001",
+    "purpose": "READ_ONLY_OBLIGATION_REVIEW",
+    "valid_from": "2026-09-01",
+    "valid_until": "2026-10-31"
+  },
+  "sources": {
+    "case_sha256": "e182038714ba7bae2c75a1220b10dc1b226781dd592f8ee9d90ee3d22ea152ce",
+    "pack_sha256": "e0c28cda4b6d8ad8ded6951cb8ba2e172fea1f3f6736464dbe79f60bc15f861a",
+    "case_json_digest": "cefd3488b634be1716124c4e3d899020a14a4722c345ba3c8fe8e0082bb85238",
+    "pack_json_digest": "89fd513e3dda74b1a58b7110e645ab44ce143eb2ae5fe1d86251ac3aa6d9898b",
+    "event_count": 2,
+    "evidence_count": 1,
+    "rule_count": 2
+  }
+}

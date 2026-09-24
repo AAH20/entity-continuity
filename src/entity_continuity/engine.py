@@ -171,9 +171,34 @@ def evaluate(case: dict[str, Any], pack: dict[str, Any], as_of: str) -> dict[str
     return {**core, "input_digest": _digest({"case": case, "pack": pack}), "receipt_digest": _digest(core)}
 
 
-def load_json(path: str | Path) -> dict[str, Any]:
-    with open(path, encoding="utf-8") as stream:
-        value = json.load(stream)
+def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise InvalidCase(f"duplicate JSON key: {key}")
+        value[key] = item
+    return value
+
+
+def _reject_constant(value: str) -> None:
+    raise InvalidCase(f"non-finite JSON value: {value}")
+
+
+def read_json_document(path: str | Path, *, max_bytes: int = 2_000_000) -> tuple[dict[str, Any], str]:
+    """Read bounded, strict JSON and return a digest of its exact UTF-8 bytes."""
+    with open(path, "rb") as stream:
+        raw = stream.read(max_bytes + 1)
+    if len(raw) > max_bytes:
+        raise InvalidCase(f"{path} exceeds the {max_bytes}-byte input limit")
+    try:
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object,
+                           parse_constant=_reject_constant)
+    except UnicodeDecodeError as exc:
+        raise InvalidCase(f"{path} must be UTF-8 JSON") from exc
     if not isinstance(value, dict):
         raise InvalidCase(f"{path} must contain an object")
-    return value
+    return value, hashlib.sha256(raw).hexdigest()
+
+
+def load_json(path: str | Path) -> dict[str, Any]:
+    return read_json_document(path)[0]

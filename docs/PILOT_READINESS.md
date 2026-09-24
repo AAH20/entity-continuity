@@ -27,7 +27,7 @@ flowchart LR
   class Export,Quarantine,Normalize,Entity,Pack,Receipt,Minimize,A2Z private;
 ```
 
-Only the local synthetic evaluator, receipt, verifier and A2Z export/import exist today. The private source staging, expert-reviewed pack and authenticated review identities are **not implemented**. A pilot must stay read-only until those controls have been built and independently reviewed.
+The local synthetic evaluator, strict source-manifest intake, receipt, verifier and A2Z export/import exist today. The manifest's scope is self-declared; private source staging, expert-reviewed packs and authenticated review identities are **not implemented**. A real pilot must remain read-only until those controls have been built and independently reviewed.
 
 ## Preconditions for the first customer-authorized pilot
 

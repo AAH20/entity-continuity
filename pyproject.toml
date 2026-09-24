@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "entity-continuity"
-version = "0.4.0"
+version = "0.5.0"
 description = "Inspectable entity lifecycle, obligation, authority, and evidence reference engine"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,6 +13,8 @@ license = "MIT"
 entity-continuity = "entity_continuity.cli:main"
 entity-continuity-verify = "entity_continuity.verify_cli:main"
 entity-continuity-a2z-export = "entity_continuity.a2z_cli:main"
+entity-continuity-intake = "entity_continuity.intake_cli:main"
+entity-continuity-intake-verify = "entity_continuity.intake_verify_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

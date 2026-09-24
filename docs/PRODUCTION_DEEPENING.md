@@ -70,7 +70,7 @@ flowchart LR
   class Group,EntityA,EntityB,Rel,Role,Event,Obligation,Work,Result,Evidence record;
 ```
 
-Target invariants: tenant ID is explicit on every row; entity relationship edges have effective dates; events carry both occurrence and observation time; a source correction appends a new version; one work order refers to a precise rule instance and source digest; provider claims stay distinct from official confirmation; deletions follow retention and legal-hold policies. This normalized model is a **design**, not a migration shipped in v0.4.
+Target invariants: tenant ID is explicit on every row; entity relationship edges have effective dates; events carry both occurrence and observation time; a source correction appends a new version; one work order refers to a precise rule instance and source digest; provider claims stay distinct from official confirmation; deletions follow retention and legal-hold policies. This normalized model is a **design**, not a migration shipped in v0.5.
 
 ## Operational loop
 
